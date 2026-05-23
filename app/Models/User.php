@@ -75,6 +75,12 @@ class User extends Authenticatable
         return $this->hasOne(Employee::class);
     }
 
+    public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Customer::class);
+    }
+
+
     protected $attributes = [
         'is_active' => true,
     ];

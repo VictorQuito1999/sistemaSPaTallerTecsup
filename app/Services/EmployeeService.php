@@ -21,13 +21,16 @@ class EmployeeService
     {
         $temporaryPasswordHash = Hash::make(Str::password(48));
 
+        // Mapear especialidad a rol de usuario
+        $role = ($attributes['specialty'] ?? '') === 'Recepcionista' ? 'receptionist' : 'groomer';
+
         $user = User::create([
             'first_name' => $attributes['first_name'],
             'last_name' => $attributes['last_name'] ?? null,
             'email' => $attributes['email'],
             'phone' => $attributes['phone'],
             'password' => $temporaryPasswordHash,
-            'role' => 'groomer',
+            'role' => $role,
             'must_change_password' => true,
             'is_active' => false,
             'email_verified_at' => null,
@@ -40,10 +43,10 @@ class EmployeeService
             'shift' => $attributes['shift'],
         ]);
 
-        // URL absoluta: usa APP_URL (config/app.php → env APP_URL)). Vigencia del firma: 15 minutos.
+        // URL absoluta: usa APP_URL (config/app.php → env APP_URL)). Vigencia del firma: 60 minutos.
         $activationUrl = URL::temporarySignedRoute(
             'employee.activation',
-            Carbon::now()->addMinutes(15),
+            Carbon::now()->addHours(1),
             ['user' => $user->id],
             absolute: true
         );
@@ -69,6 +72,15 @@ class EmployeeService
             'last_name' => $attributes['last_name'] ?? null,
             'phone' => $attributes['phone'] ?? null,
         ], fn ($v) => $v !== null));
+
+        if (array_key_exists('is_active', $attributes)) {
+            $user->is_active = (bool) $attributes['is_active'];
+        }
+
+        // Actualizar rol si cambia la especialidad
+        if (isset($attributes['specialty'])) {
+            $user->role = $attributes['specialty'] === 'Recepcionista' ? 'receptionist' : 'groomer';
+        }
 
         $user->save();
 
@@ -100,7 +112,7 @@ class EmployeeService
      */
     public function completeActivation(User $user, string $password): array
     {
-        if ($user->role !== 'groomer') {
+        if (!in_array($user->role, ['groomer', 'receptionist'])) {
             throw new \InvalidArgumentException(__('Usuario no válido para activación.'));
         }
 

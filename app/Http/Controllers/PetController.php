@@ -2,64 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PetRequest;
 use App\Models\Pet;
+use App\Services\PetService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected PetService $petService;
+
+    public function __construct(PetService $petService)
     {
-        //
+        $this->petService = $petService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): JsonResponse
     {
-        //
+        $pets = $this->petService->getPets();
+        return response()->json($pets);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(PetRequest $request): JsonResponse
     {
-        //
+        $pet = $this->petService->savePets($request->validated());
+        return response()->json($pet, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pet $pet)
+    public function show(Pet $pet): JsonResponse
     {
-        //
+        $pet->load(['customer.user', 'breed.category']);
+        return response()->json($pet);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pet $pet)
+    public function update(PetRequest $request, Pet $pet): JsonResponse
     {
-        //
+        $updated = $this->petService->updatePet($pet, $request->validated());
+        return response()->json($updated);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Pet $pet)
+    public function destroy(Pet $pet): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pet $pet)
-    {
-        //
+        $this->petService->deletePet($pet);
+        return response()->json(null, 204);
     }
 }
+

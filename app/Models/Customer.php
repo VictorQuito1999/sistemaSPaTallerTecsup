@@ -14,4 +14,21 @@ class Customer extends Model
         'customer_group_id',
         'status',
     ];
+
+    protected $appends = ['full_name'];
+
+    public function getFullNameAttribute()
+    {
+        return $this->user ? $this->user->first_name . ' ' . $this->user->last_name : '';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function pets()
+    {
+        return $this->hasMany(Pet::class);
+    }
 }

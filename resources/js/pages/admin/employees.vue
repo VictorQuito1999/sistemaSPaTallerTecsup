@@ -21,6 +21,7 @@ const headers = [
 ]
 
 const form = ref({
+  id: null,
   first_name: '',
   last_name: '',
   email: '',
@@ -28,7 +29,10 @@ const form = ref({
   ci: '',
   specialty: 'Groomer',
   shift: 'mañana',
+  is_active: false,
 })
+
+const isEditing = computed(() => !!form.value.id)
 
 const fullName = row => [row.user?.first_name, row.user?.last_name].filter(Boolean).join(' ') || '—'
 
@@ -55,6 +59,7 @@ const loadEmployees = async () => {
 
 const openCreate = () => {
   form.value = {
+    id: null,
     first_name: '',
     last_name: '',
     email: '',
@@ -62,6 +67,22 @@ const openCreate = () => {
     ci: '',
     specialty: 'Groomer',
     shift: 'mañana',
+    is_active: false,
+  }
+  dialog.value = true
+}
+
+const openEdit = item => {
+  form.value = {
+    id: item.id,
+    first_name: item.user?.first_name || '',
+    last_name: item.user?.last_name || '',
+    email: item.user?.email || '',
+    phone: item.user?.phone || '',
+    ci: item.ci || '',
+    specialty: item.specialty || 'Groomer',
+    shift: item.shift || 'mañana',
+    is_active: !!item.user?.is_active,
   }
   dialog.value = true
 }
@@ -70,8 +91,11 @@ const saveEmployee = async () => {
   saving.value = true
   errorMessage.value = ''
   try {
-    const res = await apiFetch('admin/employees', {
-      method: 'POST',
+    const url = isEditing.value ? `admin/employees/${form.value.id}` : 'admin/employees'
+    const method = isEditing.value ? 'PUT' : 'POST'
+
+    const res = await apiFetch(url, {
+      method: method,
       body: JSON.stringify(form.value),
     }, auth.token)
 
@@ -172,6 +196,15 @@ onMounted(loadEmployees)
         </template>
         <template #item.actions="{ item }">
           <VBtn
+            size="small"
+            variant="text"
+            color="primary"
+            class="me-2"
+            @click="openEdit(item)"
+          >
+            Editar
+          </VBtn>
+          <VBtn
             v-if="item.user?.is_active"
             size="small"
             variant="text"
@@ -189,7 +222,7 @@ onMounted(loadEmployees)
       max-width="560"
     >
       <VCard>
-        <VCardTitle>Nuevo empleado</VCardTitle>
+        <VCardTitle>{{ isEditing ? 'Editar empleado' : 'Nuevo empleado' }}</VCardTitle>
         <VCardText>
           <VForm @submit.prevent="saveEmployee">
             <VTextField
@@ -208,6 +241,7 @@ onMounted(loadEmployees)
               label="Correo (activación)"
               type="email"
               class="mb-2"
+              :disabled="isEditing"
               required
             />
             <VTextField
@@ -220,6 +254,7 @@ onMounted(loadEmployees)
               v-model="form.ci"
               label="CI"
               class="mb-2"
+              :disabled="isEditing"
               required
             />
             <VSelect 
@@ -227,8 +262,11 @@ onMounted(loadEmployees)
               label="Especialidad"
               class="mb-2"
               :items="[
-                {title:'Recepsionista'},
-                {title:'Groomer'}]"
+                { title: 'Recepcionista', value: 'Recepcionista' },
+                { title: 'Groomer', value: 'Groomer' }
+              ]"
+              item-title="title"
+              item-value="value"
             />
             <VSelect
               v-model="form.shift"
@@ -238,6 +276,14 @@ onMounted(loadEmployees)
                 { title: 'Tarde', value: 'tarde' },
                 { title: 'Noche', value: 'noche' },
               ]"
+            />
+            <VSwitch
+              v-if="isEditing"
+              v-model="form.is_active"
+              :label="form.is_active ? 'Activo' : 'Inactivo'"
+              color="success"
+              class="mt-2"
+              hide-details
             />
             <VCardActions class="px-0 pt-4">
               <VSpacer />

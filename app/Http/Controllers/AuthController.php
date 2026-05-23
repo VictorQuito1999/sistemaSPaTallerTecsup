@@ -253,7 +253,7 @@ class AuthController extends Controller
 
     private function publicUser(User $user): array
     {
-        return [
+        $data = [
             'id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
@@ -263,7 +263,15 @@ class AuthController extends Controller
             'must_change_password' => (bool) $user->must_change_password,
             'email_verified_at' => $user->email_verified_at,
         ];
+
+        if ($user->role === 'customer') {
+            $user->load(['customer.pets.breed.category']);
+            $data['customer'] = $user->customer;
+        }
+
+        return $data;
     }
+
 
     private function createCustomerRecord(int $userId): void
     {

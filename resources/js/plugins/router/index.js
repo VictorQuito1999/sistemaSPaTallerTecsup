@@ -71,14 +71,15 @@ router.beforeEach(async to => {
   const requiresCustomer = to.matched.some(record => record.meta?.requiresCustomer)
   const requiresStaff = to.matched.some(record => record.meta?.requiresStaff)
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth)
-  const requiresAdminRole = to.matched.some(record => record.meta?.role === 'admin')
+  const metaRoles = to.matched.map(r => r.meta?.role).filter(Boolean).flat()
   const guestOnly = to.matched.some(record => record.meta?.guestOnly)
   const guestAdminOnly = to.matched.some(record => record.meta?.guestAdminOnly)
 
   const goingAdminArea = to.path.startsWith('/admin') && !to.path.startsWith('/admin/login')
   const goingEmpleadoArea = to.path.startsWith('/empleado') && !to.matched.some(r => r.meta?.public)
+  const goingGroomerArea = to.path.startsWith('/groomer')
 
-  if ((goingAdminArea || goingEmpleadoArea) && auth.user?.role === 'customer') {
+  if ((goingAdminArea || goingEmpleadoArea || goingGroomerArea) && auth.user?.role === 'customer') {
     return '/cliente/dashboard'
   }
 
@@ -102,17 +103,30 @@ router.beforeEach(async to => {
     return '/login'
   }
 
-  if (requiresAuth) {
-    if (requiresAdminRole) {
-      if (!auth.isAdminSession) {
-        if (auth.user?.role === 'customer') {
-          return '/cliente/dashboard'
-        }
+  if (requiresStaff && auth.isStaffSession) {
+    const roleSets = to.matched.map(r => r.meta?.staffRoles).filter(Boolean)
+    const allowed = roleSets.flat()
+    if (allowed.length > 0 && !allowed.includes(auth.user?.role)) {
+      return '/empleado/dashboard'
+    }
+  }
 
+  // Nueva validación para rutas que requieren admin (dentro del área administrativa compartida)
+  const requiresAdmin = to.matched.some(record => record.meta?.requiresAdmin)
+  if (requiresAdmin && auth.user?.role === 'receptionist') {
+    return '/admin/calendar'
+  }
+
+  if (requiresAuth) {
+    if (metaRoles.length > 0 && !metaRoles.includes(auth.user?.role)) {
+      if (to.path.startsWith('/admin')) {
         return '/admin/login'
       }
+
+      return '/login'
     }
-    else if (!auth.isAuthenticated) {
+    
+    if (!auth.isAuthenticated) {
       return '/cliente/login'
     }
   }

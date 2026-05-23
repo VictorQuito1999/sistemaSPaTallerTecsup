@@ -1,35 +1,26 @@
 # vue
 amdin crdenciales=admin@petspa.local / PetSpa#Admin1
-This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
+Cómo funcionaría
 
-[VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur).
+    El cliente en el formulario solo elige el tamaño (Pequeño, Mediano, Grande, Gigante).
 
-## Type Support for `.vue` Imports in TS
+    En tu backend, al guardar la mascota, puedes asignar un peso referencial automático según el tamaño.
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates.
+    Ejemplo de mapeo:
 
-However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can run `Volar: Switch TS Plugin on/off` from VS Code command palette.
+        Pequeño → 5 kg
 
-## Customize configuration
+        Mediano → 15 kg
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+        Grande → 30 kg
 
-## Project Setup
+        Gigante → 45 kg
 
-```sh
-npm install
-```
+Ventajas
 
-### Compile and Hot-Reload for Development
+    El cliente no se complica ingresando datos exactos.
 
-```sh
-npm run dev
-```
+    Tu algoritmo de duración ya puede trabajar con un número (aunque sea aproximado).
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+    Más adelante, recepción o el groomer pueden actualizar el peso real cuando midan la mascota.

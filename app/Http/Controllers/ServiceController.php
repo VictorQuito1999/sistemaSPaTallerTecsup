@@ -12,23 +12,27 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Service::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:150',
+            'type' => 'required|string|max:50',
+            'base_duration_min' => 'required|integer|min:1',
+            'base_price' => 'required|numeric|min:0',
+            'allows_double_booking' => 'sometimes|boolean',
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        $service = Service::create($data);
+
+        return response()->json($service, 201);
     }
 
     /**
@@ -36,15 +40,7 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Service $service)
-    {
-        //
+        return response()->json($service);
     }
 
     /**
@@ -52,7 +48,18 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        //
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:150',
+            'type' => 'sometimes|required|string|max:50',
+            'base_duration_min' => 'sometimes|required|integer|min:1',
+            'base_price' => 'sometimes|required|numeric|min:0',
+            'allows_double_booking' => 'sometimes|boolean',
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        $service->update($data);
+
+        return response()->json($service);
     }
 
     /**
@@ -60,6 +67,8 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        $service->delete();
+        return response()->json(null, 204);
     }
+
 }

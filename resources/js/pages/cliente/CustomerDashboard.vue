@@ -1,4 +1,5 @@
 <script setup>
+import ClienteAreaNav from '@/components/cliente/ClienteAreaNav.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -37,39 +38,63 @@ const logout = async () => {
 </script>
 
 <template>
-  <VContainer class="fill-height py-12">
-    <VRow justify="center">
-      <VCol
-        cols="12"
-        md="8"
-        lg="6"
-      >
-        <VCard
-          class="pa-8"
-          elevation="3"
+  <div class="cliente-dashboard-page bg-surface">
+    <ClienteAreaNav current="dashboard" />
+
+    <VContainer class="py-10 py-md-12">
+      <VRow justify="center">
+        <VCol
+          cols="12"
+          md="8"
+          lg="6"
         >
-          <VCardTitle class="text-h4 font-weight-medium mb-2">
-            Tu espacio de cliente
-          </VCardTitle>
-          <VCardText class="text-body-1 text-medium-emphasis">
-            <p class="mb-0">
-              Bienvenido, {{ displayName }}! Aquí puedes ver tus mascotas
-            </p>
-          </VCardText>
-          <VCardActions class="pt-0">
-            <VSpacer />
-            <VBtn
-              color="error"
-              variant="tonal"
-              prepend-icon="ri-logout-box-r-line"
-              :loading="isLoggingOut"
-              @click="logout"
-            >
-              Cerrar sesión
-            </VBtn>
-          </VCardActions>
-        </VCard>
-      </VCol>
-    </VRow>
-  </VContainer>
+          <VCard
+            class="pa-8 welcome-card"
+            elevation="3"
+            rounded="lg"
+          >
+            <VCardTitle class="text-h4 font-weight-medium mb-2 text-primary">
+              Tu espacio de cliente
+            </VCardTitle>
+            <VCardText class="text-body-1 text-medium-emphasis">
+              <p class="mb-4">
+                Bienvenido, {{ displayName }}! Aquí puedes ver tus mascotas
+              </p>
+              <VBtn
+                color="primary"
+                variant="flat"
+                prepend-icon="ri-user-heart-line"
+                class="me-2 mb-2"
+                to="/cliente/perfil-mascotas"
+              >
+                Ir a perfil y mascotas
+              </VBtn>
+            </VCardText>
+            <VCardActions class="pt-0 flex-wrap">
+              <VSpacer />
+              <VBtn
+                color="error"
+                variant="tonal"
+                prepend-icon="ri-logout-box-r-line"
+                :loading="isLoggingOut"
+                @click="logout"
+              >
+                Cerrar sesión
+              </VBtn>
+            </VCardActions>
+          </VCard>
+        </VCol>
+      </VRow>
+    </VContainer>
+  </div>
 </template>
+
+<style scoped>
+.cliente-dashboard-page {
+  min-height: 100vh;
+}
+
+.welcome-card {
+  border: 1px solid rgba(var(--v-theme-primary), 0.08);
+}
+</style>

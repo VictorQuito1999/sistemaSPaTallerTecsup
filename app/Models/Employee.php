@@ -29,4 +29,14 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(employee_schedules::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }

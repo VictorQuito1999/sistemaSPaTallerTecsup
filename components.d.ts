@@ -7,13 +7,21 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AppointmentActionDialog: typeof import('./resources/js/components/admin/AppointmentActionDialog.vue')['default']
+    AppointmentForm: typeof import('./resources/js/components/admin/AppointmentForm.vue')['default']
     CardStatisticsHorizontal: typeof import('./resources/js/@core/components/cards/CardStatisticsHorizontal.vue')['default']
     CardStatisticsVertical: typeof import('./resources/js/@core/components/cards/CardStatisticsVertical.vue')['default']
     CardStatisticsWithImages: typeof import('./resources/js/@core/components/cards/CardStatisticsWithImages.vue')['default']
+    ClienteAreaNav: typeof import('./resources/js/components/cliente/ClienteAreaNav.vue')['default']
+    CustomerPetDialog: typeof import('./resources/js/components/admin/CustomerPetDialog.vue')['default']
+    CustomerPetGrid: typeof import('./resources/js/components/cliente/CustomerPetGrid.vue')['default']
     ErrorHeader: typeof import('./resources/js/components/ErrorHeader.vue')['default']
     MoreBtn: typeof import('./resources/js/@core/components/MoreBtn.vue')['default']
+    PetFormModal: typeof import('./resources/js/components/cliente/PetFormModal.vue')['default']
+    PetHealthModal: typeof import('./resources/js/components/admin/PetHealthModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StaffAreaNav: typeof import('./resources/js/components/empleado/StaffAreaNav.vue')['default']
     ThemeSwitcher: typeof import('./resources/js/@core/components/ThemeSwitcher.vue')['default']
     UpgradeToPro: typeof import('./resources/js/components/UpgradeToPro.vue')['default']
   }

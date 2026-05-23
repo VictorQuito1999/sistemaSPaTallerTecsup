@@ -1,6 +1,10 @@
 <script setup>
-import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue'; // si tu template lo soporta
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
+import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue'
+import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
+const isAdmin = computed(() => auth.user?.role === 'admin')
 </script>
 
 <template>
@@ -19,17 +23,18 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       :item="{
         title: 'Clientes',
         icon: 'ri-user-line',
-        to: '',
+        to: '/admin/customers',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Mascotas',
         icon: 'ri-paw-print-line',
-        to: '',
+        to: '/admin/pets',
       }"
     />
     <VerticalNavLink
+      v-if="isAdmin"
       :item="{
         title: 'Empleados',
         icon: 'ri-team-line',
@@ -37,23 +42,34 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       }"
     />
     <VerticalNavLink
+      v-if="isAdmin"
       :item="{
-        title: 'Servicios',
-        icon: 'ri-scissors-line',
-        to: '',
+        title: 'Inventario',
+        icon: 'ri-archive-line',
+        to: '/admin/inventory',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Citas / Agenda',
         icon: 'ri-calendar-line',
-        to: '',
+        to: '/admin/calendar',
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Tienda',
+        icon: 'ri-shopping-bag-3-line',
+        to: '/admin/shop',
       }"
     />
   </VerticalNavGroup>
 
   <!-- CMS  -->
-  <VerticalNavGroup :item="{ title: 'Contenido Web', icon: 'ri-global-line' }">
+  <VerticalNavGroup
+    v-if="isAdmin"
+    :item="{ title: 'Contenido Web', icon: 'ri-global-line' }"
+  >
     <VerticalNavLink
       :item="{
         title: 'Páginas',
@@ -92,39 +108,45 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   </VerticalNavGroup>
 
   <!-- ========== REPORTES Y ESTADÍSTICAS ========== -->
-  <VerticalNavGroup :item="{ title: 'Reportes', icon: 'ri-bar-chart-2-line' }">
+  <VerticalNavGroup
+    v-if="isAdmin"
+    :item="{ title: 'Reportes', icon: 'ri-bar-chart-2-line' }"
+  >
     <VerticalNavLink
       :item="{
         title: 'Reporte de Ventas',
         icon: 'ri-line-chart-line',
-        to: '',
+        to: '/admin/reports',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Reporte de Citas',
         icon: 'ri-calendar-check-line',
-        to: '',
+        to: '/admin/calendar',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Reporte de Clientes',
         icon: 'ri-group-line',
-        to: '',
+        to: '/admin/customers',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Dashboard Avanzado',
         icon: 'ri-bar-chart-line',
-        to: '',
+        to: '/admin/reports',
       }"
     />
   </VerticalNavGroup>
 
   <!-- ========== SEGURIDAD Y SISTEMA ========== -->
-  <VerticalNavGroup :item="{ title: 'Seguridad', icon: 'ri-lock-line' }">
+  <VerticalNavGroup
+    v-if="isAdmin"
+    :item="{ title: 'Seguridad', icon: 'ri-lock-line' }"
+  >
     <VerticalNavLink
       :item="{
         title: 'Auditoría / Trazabilidad',
@@ -149,7 +171,10 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   </VerticalNavGroup>
 
   <!-- ========== CONFIGURACIÓN ========== -->
-  <VerticalNavGroup :item="{ title: 'Ajustes', icon: 'ri-settings-3-line' }">
+  <VerticalNavGroup
+    v-if="isAdmin"
+    :item="{ title: 'Ajustes', icon: 'ri-settings-3-line' }"
+  >
     <VerticalNavLink
       :item="{
         title: 'Configuración General',
@@ -157,6 +182,28 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
         to: '/admin/settings',
       }"
     />
+    <VerticalNavLink
+      :item="{
+        title: 'Especies / Categorías',
+        icon: 'ri-apps-2-line',
+        to: '/admin/species-categories',
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Razas',
+        icon: 'ri-list-settings-line',
+        to: '/admin/breeds',
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Servicios',
+        icon: 'ri-scissors-line',
+        to: '/admin/services',
+      }"
+    />
+
     <VerticalNavLink
       :item="{
         title: 'Configuración del Spa',

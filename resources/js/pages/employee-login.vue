@@ -40,6 +40,10 @@ const submit = async () => {
 
     auth.setBearerSession(payload.user, payload.token)
 
+    if (payload.user.role === 'receptionist') {
+      return router.push('/admin/calendar')
+    }
+
     return router.push('/empleado/dashboard')
   }
   catch (error) {

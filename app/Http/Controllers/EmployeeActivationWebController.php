@@ -11,8 +11,8 @@ class EmployeeActivationWebController extends Controller
      */
     public function redirect(User $user)
     {
-        if ($user->role !== 'groomer') {
-            abort(403);
+        if (!in_array($user->role, ['groomer', 'receptionist'])) {
+            abort(403, 'Rol no válido para activación.');
         }
 
         if ($user->is_active) {

@@ -13,10 +13,19 @@ class EmployeeController extends Controller
         protected EmployeeService $employeeService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
         $rows = Employee::query()
             ->with('user')
+            ->when($request->specialty, function ($query, $specialty) {
+                return $query->where('specialty', $specialty);
+            })
+            ->when($request->has('is_active'), function ($query) use ($request) {
+                $isActive = filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN);
+                return $query->whereHas('user', function ($q) use ($isActive) {
+                    $q->where('is_active', $isActive);
+                });
+            })
             ->orderByDesc('id')
             ->get()
             ->map(fn (Employee $employee) => $this->toArray($employee));
@@ -49,6 +58,7 @@ class EmployeeController extends Controller
             'phone' => ['sometimes', 'string', 'max:30'],
             'specialty' => ['nullable', 'string', 'max:255'],
             'shift' => ['sometimes', 'string', Rule::in(['mañana', 'tarde', 'noche'])],
+            'is_active' => ['sometimes', 'boolean'],
         ]);
 
         $employee = $this->employeeService->update($employee, $validated);
